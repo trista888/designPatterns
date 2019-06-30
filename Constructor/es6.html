@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>构造器模式ES6的写法</title>
+</head>
+<style>
+  table { margin: 0 auto; }
+</style>
+<body>
+  <table>
+    <thead>
+      <tr>
+        <td>姓名</td><td>性别</td><td>数学得分</td><td>语文得分</td><td>总分</td>
+      </tr>
+    </thead>
+    <tbody id="list"></tbody>
+  </table>
+</body>
+<script>
+  class Student {
+    constructor(name, gender, math, chinese) {
+      this.name = name;
+      this.gender = gender;
+      this.math = math;
+      this.chinese = chinese;
+    }
+    sumScore() {
+      return this.math + this.chinese;
+    }
+  }
+  var lzh = new Student('李华华', '男', 90, 79);
+  var ct = new Student('崔涛涛', '女', 98, 90);
+  document.getElementById('list').innerHTML = `<tr>
+    <td>${lzh.name}</td><td>${lzh.gender}</td><td>${lzh.math}</td><td>${lzh.chinese}</td><td>${lzh.sumScore()}</td>
+  </tr>
+  <tr>
+    <td>${ct.name}</td><td>${ct.gender}</td><td>${ct.math}</td><td>${ct.chinese}</td><td>${ct.sumScore()}</td>
+  </tr>`;
+</script>
+</html>

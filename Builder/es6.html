@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>构建者模式的ES5写法</title>
+</head>
+<body>
+
+</body>
+<script>
+  class Student{
+
+  }
+  class StudentBuilder{
+    constructor(){
+      this.student = new Student();
+    }
+    setName(name){
+      this.student.name = name;
+    }
+    setGender(gender){
+      this.student.gender = gender;
+    }
+    build(){
+      return this.student;
+    }
+  }
+  const studentBbuilder = new StudentBuilder();
+  studentBbuilder.setName('李华华');
+  studentBbuilder.setGender('男');
+  console.log(studentBbuilder.build());
+</script>
+</html>

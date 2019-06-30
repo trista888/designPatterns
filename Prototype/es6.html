@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>构造器模式ES6的写法</title>
+</head>
+<style>
+  table { margin: 0 auto; }
+</style>
+<body>
+  <table>
+    <thead>
+      <tr>
+        <td>姓名</td><td>性别</td><td>数学得分</td><td>语文得分</td><td>总分</td>
+      </tr>
+    </thead>
+    <tbody id="list"></tbody>
+  </table>
+</body>
+<script>
+  const rootEle = document.getElementById('list');
+  class Student {
+    constructor(name, gender, math, chinese) {
+      this.name = name;
+      this.gender = gender;
+      this.math = math;
+      this.chinese = chinese;
+    }
+    /*计算总分*/
+    sumScore(){
+      return this.math + this.chinese;
+    }
+    /*将对象插入到<tbody></tbody>中*/
+    mount(){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${this.name}</td><td>${this.gender}</td><td>${this.math}</td><td>${this.chinese}</td><td>${this.sumScore()}</td>
+      `;
+      rootEle.appendChild(tr);
+    }
+  }
+  var lzh = new Student('李华华', '男', 90, 79);
+  var ct = new Student('崔涛涛', '女', 98, 90);
+  lzh.mount();
+  ct.mount();
+</script>
+</html>
