@@ -4,10 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>构建者模式的ES5写法</title>
+  <title>构建者模式的ES6写法</title>
 </head>
 <body>
-
+  <form id="create">
+    <div>
+      <label>姓名</label>
+      <input type="text" name="name" autofocus="true" autocomplete="off">
+    </div>
+    <div>
+      <label>性别</label>
+      <input type="radio" name="gender" value="男" checked >男
+      <input type="radio" name="gender" value="女">女
+    </div>
+    <div>
+      <label>头发长度</label>
+      <input type="number" name="hairlen">
+    </div>
+    <button type="submit">创建学生</button>
+  </form>
 </body>
 <script>
   class Student{
@@ -17,19 +32,39 @@
     constructor(){
       this.student = new Student();
     }
-    setName(name){
-      this.student.name = name;
+    setName (name){
+    this.student.name = name;
     }
     setGender(gender){
       this.student.gender = gender;
+    }
+    setHairlen(hairlen){
+      if((this.student.gender == "男" && hairlen < 2) || (this.student.gender == "女" &&  hairlen < 25)){
+            this.student.hairlen = hairlen;
+      }else{
+        throw '回去剪头';
+      }
     }
     build(){
       return this.student;
     }
   }
-  const studentBbuilder = new StudentBuilder();
-  studentBbuilder.setName('李华华');
-  studentBbuilder.setGender('男');
-  console.log(studentBbuilder.build());
+  const createForm = document.getElementById('create');
+  createForm.addEventListener("submit",function(e){
+    e.preventDefault();//阻止浏览器默认行为
+    const name = document.querySelector('[name=name]').value;
+    const gender = document.querySelector('[name=gender]:checked').value;
+    const hairlen = document.querySelector('[name=hairlen]').value;
+    const builder = new StudentBuilder();
+    try{
+      builder.setName(name);
+      builder.setGender(gender);
+      builder.setHairlen(hairlen);
+      const student = builder.build();
+      console.log(student);
+    }catch(e){
+      alert(e);
+    }
+  });
 </script>
 </html>

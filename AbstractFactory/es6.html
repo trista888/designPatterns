@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>抽象工厂模式的ES6写法</title>
+</head>
+<body>
+  
+</body>
+<script>
+  /* 需求： 根据情况创建学生与老师用户
+   * 思路： 抽象工厂模式调用学生工厂与老师工厂
+   */
+   window.onload = function(){
+     init();
+   }
+  function init(){
+    let student = abstractUser('student')('崔涛', '女', '文科');
+    let teacher = abstractUser('teacher')('王方登', '男', '特级教师');
+    console.log(student, teacher);
+  }
+  /*
+   * 学生对象
+   * @param {String} name 姓名
+   * @param {String} gender 性别
+   * @param {Array} subjects 专业科目
+   */
+  class Student {
+    constructor(name, gender, subjects){
+      this.name = name;
+      this.gender = gender;
+      //文科：['政治','历史','地理']
+      //理科：['物理','化学','生物']
+      //体育：['长跑','打球','跳高']
+      this.subjects = subjects;
+    }
+  }
+  /*
+   * 创建学生
+   * @param {String} name 姓名
+   * @param {String} type 文科还是理科
+   * @return {Student}
+   */
+   function studentFactory(name, gender, type){
+    switch(type){
+      case '文科':
+        return new Student(name, gender, ['政治','历史','地理']);
+        break;
+      case '理科':
+        return new Student(name, gender, ['物理','化学','生物']);
+        break;
+      case '体育':
+        return new Student(name, gender, ['长跑','打球','跳高']);
+        break;
+      default: 
+        throw '没有这个专业';
+    }
+  }
+
+  /*
+   * 老师对象
+   * @param {String} name 姓名
+   * @param {String} gender 性别
+   * @param {String} position 评级职称
+   */
+  class Teacher{
+    constructor(name, gender, position){
+      this.name = name;
+      this.gender = gender;
+      this.position = position;
+    }
+  }
+  /*
+   * 创建老师
+   * @param {String} name 姓名
+   * @param {String} gender 性别
+   * @param {String} position 职称
+   * @param {Teacher}
+   */
+  function teacherFactory(name, gender, position){
+    return new Teacher(name, gender, position);
+  }
+
+  function abstractUser(factory){
+    switch(factory){
+      case 'student':
+        return studentFactory;
+        break;
+      case 'teacher':
+        return teacherFactory;
+        break;
+      default:
+        throw '没有这个工厂';
+        break;
+    }
+  }
+</script>
+</html>

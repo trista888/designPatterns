@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>抽象工厂模式的ES6写法</title>
+</head>
+<body>
+   <form id="create">
+    <div>
+      <label>姓名</label>
+      <input type="text" name="name" autofocus="true" autocomplete="off">
+    </div>
+    <div>
+      <label>性别</label>
+      <input type="radio" name="gender" value="男" checked >男
+      <input type="radio" name="gender" value="女">女
+    </div>
+    <div>
+      <label>专业</label>
+      <select name="type">
+        <option value="理科">理科</option><option value="文科">文科</option><option value="体育">体育</option>
+      </select>
+    </div>
+    <div>
+      <button type="submit">创建用户</button>
+    </div>
+  </form>
+</body>
+<script>
+  init();
+  function init(){
+    var form = document.getElementById('create');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var name = document.querySelector('[name=name]').value;
+      var gender = document.querySelector('[name=gender]:checked').value;
+      var type = document.querySelector('[name=type]').value;
+      var student = studentFactory(name, gender, type);
+      console.log(student);
+    });
+  }
+  /*
+   * 学生对象
+   * @param {String} name 姓名
+   * @param {String} gender 性别
+   * @param {Array} subjects 专业科目
+   */
+  class Student{
+    constructor(name, gender, subjects){
+      this.name = name;
+      this.gender = gender;
+      //文科：['政治','历史','地理']
+      //理科：['物理','化学','生物']
+      //体育：['长跑','打球','跳高']
+      this.subjects = subjects;
+    }
+  }
+  /*
+   * 创建学生
+   * @param {String} name 姓名
+   * @param {String} type 文科还是理科
+   * @return {Student}
+   */
+  function studentFactory(name, gender, type){
+    switch(type){
+      case '文科':
+        return new Student(name, gender, ['政治','历史','地理']);
+        break;
+      case '理科':
+        return new Student(name, gender, ['物理','化学','生物']);
+        break;
+      case '体育':
+        return new Student(name, gender, ['长跑','打球','跳高']);
+        break;
+      default: 
+        throw '没有这个专业';
+    }
+  }
+</script>
+</html>

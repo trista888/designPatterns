@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>单例模式的ES5写法</title>
+	<style>
+		button { margin-left: 10px; }
+		.page { margin-top: 10px; }
+	</style>
+</head>
+<body>
+	<div>
+		采购余额 <span id="balance">100</span>元
+	</div>
+	<form id="balance-form">
+		<div class="page a">
+			部门A <input type="number" name="apgeA">
+			<button type="button" class="add">+</button><button type="button" class="sub">-</button>
+		</div>
+		<div class="page b">
+			部门B <input type="number" name="apgeB">
+			<button type="button" class="add">+</button><button type="button" class="sub">-</button>
+		</div>
+	</form>
+</body>
+<script>
+	const elForm = document.getElementById('balance-form');
+	const elBalance = document.getElementById('balance');
+	window.onload = function(){
+		init();
+	}
+	function init(){
+		const a = new Division('.page.a');
+		const b = new Division('.page.b');
+	}
+	/*展示余额（一个函数一个功能尽量明确化）*/
+	function renderBalance(){
+		const balance = new Balance();
+		elBalance.innerText = balance.balance;
+	}
+	/*部门A、部门B对象及操作*/
+	class Division{
+		constructor(selector){
+			this.el = document.querySelector(selector);
+			this.elAdd = this.el.querySelector('.add');
+			this.elSub = this.el.querySelector('.sub');
+			this.elInput = this.el.querySelector('input');
+			const balance = new Balance();
+			this.elAdd.addEventListener('click', ()=>{
+				balance.add(this.elInput.value);
+				elForm.reset();
+				renderBalance();
+			});
+			this.elSub.addEventListener('click', ()=>{
+				balance.sub(this.elInput.value);
+				elForm.reset();
+				renderBalance();
+			});
+		}
+		
+	}
+	/* 单例模式：无论new多少次都只有一个对象
+	 * 这里的余额只有一个，这个部门可以重置或者消费	
+	 */
+	class Balance{
+		constructor(){
+			//如果不是第一次new，instance肯定是存在的
+			if(Balance.instance){
+				return Balance.instance;
+			}else{//否则instance不存在
+				//组装新对象
+				this.balance = 100;
+				//将其存放到机器上
+				Balance.instance = this;
+			}
+		}
+		/*重置余额*/
+		add(num){
+			this.change(num);
+		}
+		/*消费余额*/
+		sub(num){
+			this.change(-num);
+		}
+		change(num){
+			if(num){
+				this.balance += parseFloat(num);
+			}else{
+				alert('请输入正确的金额');
+			}
+		}
+	}
+</script>
+</html>
