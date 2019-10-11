@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>缓存代理之计算乘积</title>
+</head>
+<body>
+	<script>
+		var mult = function(){
+			var result = 1;
+			console.log('本体计算乘积');
+			for (var i = arguments.length - 1; i >= 0; i--) {
+				result = result * arguments[i];
+			}
+			return result;
+		}
+		console.log(mult(2,4,6), mult(2,4,6));
+
+		/*var proxyMult = (function(){
+			var cache = {};
+			return function(){
+				var args = Array.prototype.join(arguments, ',');
+				if(args in cache){
+					return cache[args];//args代表cache中的变量，如果是cache.args代表cache中的属性
+				}
+				return cache[args] = mult.apply(this, arguments);
+			};
+		})();
+		console.log(proxyMult(2,4,6), proxyMult(2,4,6));*/
+		var createProxyFactory = function(fn){
+			var cache = {};
+			return function(){
+				var args = Array.prototype.join(arguments, ',');
+				if(args in cache){
+					return cache[args];//args代表cache中的变量，如果是cache.args代表cache中的属性
+				}
+				return cache[args] = fn.apply(this, arguments);
+			};
+		};
+		var proxyMult = createProxyFactory(mult);
+		console.log(proxyMult(2,4,6), proxyMult(2,4,6));
+	</script>
+</body>
+</html>

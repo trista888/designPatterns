@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>策略模式</title>
+</head>
+<body>
+	<script>
+		var strategies = {
+			'S': function(salary){
+				return 4 * salary;
+			},
+			'A': function(salary){
+				return 3 * salary;
+			},
+			'B': function(salary){
+				return 2 * salary;
+			},
+		};//策略部分
+		var calculateBonus = function(level, salary){
+			return strategies[level](salary);
+		};//环境引用
+		console.log(calculateBonus('A', 2000));//6000
+		console.log(calculateBonus('S', 3000));//12000
+		console.log(calculateBonus('B', 4000));//8000
+	</script>
+</body>
+</html>

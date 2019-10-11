@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>闭包方式实现命令模式</title>
+</head>
+<body>
+		<button type="button" id="btn1">主菜单</button>
+		<script>
+			var ele_btn1 = document.getElementById('btn1');
+			var setCommand = function(button, command){
+				button.onclick = function(){
+					command.execute();
+				}
+			};
+			var menuBar = {
+				refush: function(){
+					console.log('刷新主菜单')
+				}
+			};
+			var RefushMenuBarCommand = function(recevier){
+				return {
+					execute: function(){
+						recevier.refush();
+					}
+				} 
+			};
+			var refushMenuBarCommand = new RefushMenuBarCommand(menuBar);
+			setCommand(ele_btn1, refushMenuBarCommand);
+		</script>
+</body>
+</html>

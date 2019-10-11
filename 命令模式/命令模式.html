@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>命令模式</title>
+</head>
+<body>
+	<div class="btns-group">
+		<button type="button" id="btn1">主菜单</button>
+		<button type="button" id="btn2">子菜单</button>
+	</div>
+	<script>
+		/**开始 面向对象设计的命令模式 **/
+		var ele_btn = document.getElementById('btn1');
+		var ele_btn2 = document.getElementById('btn2');
+
+		/*往按钮上安装命令*/
+		var setCommand = function(button, command){
+			button.onclick = function(){
+				command.execute();
+			}
+		};
+		/*具体操作行为*/
+		var menuBar = {
+			refush: function(){
+				console.log('刷新菜单');
+			}
+		};
+		var subMenu = {
+			add: function(){
+				console.log('添加子菜单');
+			},
+			del: function(){
+				console.log('删除子菜单');
+			}
+		};
+		/*将行为封装在命令类中*/
+		var RefushMenuBarCommand = function(receiver){
+			this.receiver = receiver;
+		};
+		RefushMenuBarCommand.prototype.execute = function(){
+			this.receiver.refush();
+		};
+
+		var AddSubMenuCommand = function(receiver){
+			this.receiver = receiver;
+		};
+		AddSubMenuCommand.prototype.execute = function(){
+			this.receiver.add();
+		};
+		/*调用命令类并执行命令行为*/
+		var refushMenuBarCommand = new RefushMenuBarCommand(menuBar);
+		setCommand(ele_btn, refushMenuBarCommand);
+
+		var addSubMenuCommand = new AddSubMenuCommand(subMenu);
+		setCommand(ele_btn2, addSubMenuCommand);
+	</script>
+</body>
+</html>

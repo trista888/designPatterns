@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>代理模式案例</title>
+</head>
+<body>
+	<script>
+		/*普通方法*/
+		var image = (function(){
+			var imgNode = document.createElement('img');
+			document.body.append(imgNode);
+			var img = new Image;
+			img.onload = function(){
+				imgNode.src = img.src;
+				console.log(img.fileSize);
+			}
+			return {
+				setSrc: function(src){
+					imgNode.src = '../img/img1.jpg';
+					img.src = src;
+				}
+			}
+		})();
+		image.setSrc('http://hf.pubds.com/swallow/show/ed32a16e95213d78c9c4259a4ae03593.jpg');
+
+		/*虚拟代理实现*/
+		var myImage = (function(){
+			var imgNode = document.createElement('img');
+			document.body.append(imgNode);
+			return {
+				setSrc: function(src){
+					imgNode.src = src;
+				}
+			}
+		})();
+		var proxyImage = (function(){
+			var img = new Image();
+			img.onload = function(){
+				myImage.setSrc(this.src);
+			}
+			return {
+				setSrc: function(src){
+					myImage.setSrc('../img/img1.jpg'); //占位
+					setTimeout(function(){
+						img.src = src;
+					}, 1000);//模拟延迟加载
+				}
+			}
+		})();//代理函数
+		proxyImage.setSrc('http://hf.pubds.com/swallow/show/ed32a16e95213d78c9c4259a4ae03593.jpg');
+	</script>
+</body>
+</html>

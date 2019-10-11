@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>迭代器模式</title>
+</head>
+<body>
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+	<script>
+		var each = function(arr, callback){
+			for (var i = 0; i < arr.length; i++) {
+				if(callback(i, arr[i]) === false){ //callback 执行后返回false,提前终止迭代器
+                   break; //跳出for循环,会输出 'aaa'
+                  //return; //是直接结束整个each方法。不会输出‘aaa’
+				}
+				console.log('for循环：'+arr[i]);
+			}
+			console.log('aaa');
+		};
+		each([2,3,4], function(i, n){
+			if(n > 3){
+				return false; //大于3的时候终止循环
+			}
+			console.log('each迭代器：'+n);
+		});
+	</script>
+</body>
+</html>

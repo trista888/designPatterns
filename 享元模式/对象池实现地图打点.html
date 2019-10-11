@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>对象池实现地图打点</title>
+	<style>
+		html,body { width: 100%; height: 100%; padding: 0; margin: 0; }
+		#map { width: 800px; height: 800px; margin: 0 auto; }
+	</style>
+</head>
+<body>
+	<div id="map"></div>
+	<script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=hIPZprjUAa7njP10AeEBl1RI&s=1"></script> 
+	<script type="text/javascript" src="https://api.map.baidu.com/library/RichMarker/1.2/src/RichMarker_min.js "></script>
+	<script>
+		 window.map = new BMap.Map("map",{enableMapClick:false}); 
+		 map.centerAndZoom(new BMap.Point(106.103507,34.870211),6);
+
+		 /*定义获取地图气泡节点的工厂
+		  * toolTipPool作为对象池的数组成为私有属性被包含在工厂里
+		  */
+		 var toolTipFactory = (function(){
+		 	var toolTipPool = []; //toolTip 对象池
+
+		 	return {
+		 		//获取节点
+		 		create: function(){
+		 			if(toolTipPool.length === 0){ //对象池为空
+		 				var div = document.createElement('div'); //创建一个 dom
+		 				document.body.appendChild(div);
+		 				return div;
+		 			}else{
+		 				return toolTipPool.shift();//则从对象池中取出一个dom
+		 			}
+		 		},
+		 		//回收节点
+		 		recover: function(toolTipDom){
+		 			return toolTipPool.push(toolTipDom);
+		 		}
+		 	};
+		 })();
+
+		 var ary = [];//记录每次的打点
+		 var addTools = function(arr){
+		 	for(var i = 0, str; str = arr[i++];){
+			 	var toolTip = toolTipFactory.create();
+			 	toolTip.innerHTML = str;
+			 	ary.push(toolTip);
+		 	}
+		 };
+		 
+		 var deleteTools = function(){
+		 	for(var i = 0, toolTip; toolTip = ary[i++];){
+		 		var toolTip = toolTipFactory.recover(toolTip);
+		 	}
+		 	ary = [];
+		 };
+		 
+		 addTools(['A', 'B']);
+		 deleteTools();
+		 addTools(['A', 'B', 'C', 'D']);//此处的A、B节点是上一次共享下来的
+
+
+	</script>
+</body>
+</html>

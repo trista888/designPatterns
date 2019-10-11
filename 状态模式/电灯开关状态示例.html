@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>状态模式之电灯开关示例</title>
+</head>
+<body>
+<script>
+	
+	function Light(){
+		this.offStateLight = new OffStateLight(this);
+		this.weakStateLight = new WeakStateLight(this);
+		this.strongStateLight = new StrongStateLight(this);
+		this.button = null;
+	}
+	Light.prototype.init = function(){
+		let self = this;
+		let button = document.createElement('button');//创建开关按钮
+		button.innerHTML = '开灯';
+		document.body.appendChild(button);
+		this.button = button;
+		this.currentState = this.offStateLight;//设置开关的初始状态是关闭
+		this.button.onclick = function(){
+			self.currentState.buttonWasPressed();//点击开关的行为全部封装在buttonWasPressed中
+		};
+	};
+	Light.prototype.setState = function(newState){
+		this.currentState = newState;
+	};
+	function OffStateLight(light){
+		this.light = light;
+	}
+	OffStateLight.prototype.buttonWasPressed = function(){
+		this.light.button.innerHTML = '弱光';
+		this.light.setState(this.light.weakStateLight);
+	};
+	function OnStateLight(light){
+		this.light = light;
+	}
+	function WeakStateLight(light){
+		this.light = light;
+	}
+	WeakStateLight.prototype.buttonWasPressed = function(){
+		this.light.button.innerHTML = '强光';
+		this.light.setState(this.light.strongStateLight);
+	}
+	function StrongStateLight(light){
+		this.light = light;
+	}
+	StrongStateLight.prototype.buttonWasPressed = function(){
+		this.light.button.innerHTML = '开灯';
+		this.light.setState(this.light.offStateLight);
+	}
+	let light = new Light();
+	light.init();
+</script>
+</body>
+</html>

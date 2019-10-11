@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>高阶函数</title>
+</head>
+<body>
+
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+	<script>
+
+		/*分时函数*/
+		var data = [];
+		for(var i = 0; i<1000; i++){
+			data.push(i);
+		}//要展示的数据
+
+		/*
+		 * @param {array} arr 要展示的数据
+		 * @param {function} fn 封装的业务逻辑（向body中追加div）
+		 * @param {number} count 每一批次创建count个节点
+		 */
+		var timeChunk = function(arr,fn,count){
+			var t;
+			var len = arr.length;
+			var start = function(){
+				for(var i=0; i<len; i++){
+					var obj = arr[i];
+					fn(obj);
+				}
+			}
+			return function(){
+				t = setTimeout(function(){
+					if(arr.length == 0){
+						return clearTimeout(t);
+					}
+					start();
+				},200);
+			}
+		}
+		var renderFrindsList = timeChunk(data, function(n){
+			var div = document.createElement('div');
+			div.innerHTML = n;
+			document.body.appendChild(div);
+		},8);
+		renderFrindsList();
+		/*函数节流的代码实现
+		* 下面的throttle 函数的原理是，将即将被执行的函数用
+		*setTimeout 延迟一段时间执行。如果该次延迟执行还没有完成，则忽略接下来调用该函数的请求。
+		*throttle 函数接受2 个参数，第一个参数为需要被延迟执行的函数，第二个参数为延迟执行的时
+		*间。具体实现代码如下：
+		*/
+		/*var throttle = function(fn, interval){
+			var self = fn,
+			timer,
+			firstTime = true;
+			return function(){
+				var args = arguments,
+				me = this;
+				if(firstTime){//如果是第一次调用不需要延迟执行
+					self.apply(me,args);
+					return firstTime = false;
+				}
+				if(timer){//如果定时器还在，说明前一次执行还未完成
+					return false;
+				}
+				timer = setTimeout(function(){
+					clearTimeout(timer);
+					timer = null;
+					self.apply(me, args);
+				}, interval || 500);
+			}
+
+		}
+		window.onresize = throttle(function(){
+			console.log(1);
+		}, 500);*/
+		/*uncurrying函数*/
+		/*var obj1 = {name: 'cuitao'};
+		var obj2 = {
+			name: 'obj2',
+			getName: function(){
+				return this.name;
+			}
+		};
+		console.log(obj2.getName.call(obj1));//利用call方法去借用原本不属于obj2的属性或者方法
+
+
+		//在我们的预期中，Array.prototype 上的方法原本只能用来操作array 对象。但用call 和apply
+		//可以把任意对象当作this 传入某个方法，这样一来，方法中用到this 的地方就不再局限于原来
+		//规定的对象，而是加以泛化并得到更广的适用性。
+		(function(){
+			Array.prototype.push.call(arguments, 4, 5);
+			console.log(arguments)//[2,3,4,5]
+		})(2,3);
+
+
+		Function.prototype.uncurrying = function(){ 
+			var self = this;//self 此时是Array.prototype.push
+			return function(){
+				var obj = Array.prototype.shift.call(arguments);//为啥一定要是数组原型的shift方法才行？
+				return self.apply(obj, arguments);//相当于Array.prototype.push.apply( obj, 2 )
+			}
+		}
+		var push = Array.prototype.push.uncurrying();//转换为一个通用的push 函数
+		//var shift = Array.prototype.shift.uncurrying();//转换为一个通用的shift 函数
+		(function(){
+			push(arguments,4);
+			console.log(arguments);//[1,2,3,4]
+			//shift(arguments);
+			console.log(arguments);//[2,3,4]
+		})(1,2,3);
+		var cuobj = {'len': 2, "a": 1};
+		push(cuobj, 2);
+		console.log(cuobj);//{0: 2, len: 2, a: 1, length: 1}//不太理解*/
+		/*
+		* 需求： 计算每月的开销，每天结束之前记录累加结果，最后返回总额	
+		* 闭包封装变量
+		*/
+		/*var cost = (function(){
+			var args = [];
+			return function(){
+				if(arguments.length == 0){
+					var money = 0;
+					for (var i = args.length - 1; i >= 0; i--) {
+						money += args[i]
+					}
+					return money;
+				}else{
+					[].push.apply(args,arguments);
+				}
+			}
+		})();//封装args变量
+		cost(100); //未真正求值
+		cost(200); //未真正求值
+		console.log(cost()); //输出300*/
+
+		/*currying函数：当调用cost()[fn]时，如果明确地带上了一些参数，表示此时并不进行真正的求值计算，
+		 *而是把这些参数保存起来，此时让cost 函数返回另外一个函数。只有当我们以不带参数的形式执行cost()时，
+		 *才利用前面保存的所有参数，真正开始进行求值计算
+		 */
+		/*var currying = function(fn){
+			var args = [];
+			return function(){
+				if(arguments.length == 0){
+					return fn.apply(this, args);
+				}else{
+					[].push.apply(args, arguments);
+					return arguments.callee; //调用自身
+				}
+			}
+		}*/
+		/*遍历本月每天的开销并求出它们的总和*/
+		/*var cost = (function(){
+			var money = 0;
+			return function(){
+				for (var i = arguments.length - 1; i >= 0; i--) {
+					money += arguments[i]
+				}
+				return money;
+			}
+		})();
+		var cost = currying(cost);//转化为currying函数
+		cost(100); //未真正求值
+		cost(200); //未真正求值
+		console.log(cost()); //输出300*/
+		/*装饰模式*/
+		/*Function.prototype.before = function(beforefn){
+			var self = this; //保存原函数的引用
+			return function(){ //返回包含了原函数和新函数的“代理”函数
+				beforefn.apply(this, arguments); //执行新函数，修正this
+				return self.apply(this, arguments); //执行原函数
+			}
+		}
+		Function.prototype.after = function(afterfn){
+			var self = this;
+			return function(){
+				var ret = self.apply(this, arguments);
+				afterfn.apply(this, arguments);
+				return ret;
+			}
+		}
+		function fn(){
+			console.log(2);
+		}
+		fn = fn.before(function(){
+			console.log(1);
+		}).after(function(){
+			console.log(3);
+		});
+		fn();*/
+		/*单例模式*/
+		/*var getSingle = function(fn){
+			var ret;
+			return function(){
+				return ret || (ret = getSingle.apply(this, arguments));
+			}
+		}
+		var getDiv = getSingle(function(){
+			return document.createElement('div');
+		});
+		var div1 = getDiv();
+		var div2 = getDiv();
+		console.log(div1 === div2);*/
+		/*函数作为返回值输出*/
+		/*function isString(obj){
+			return Object.prototype.toString.call(obj) === '[object String]';
+		}
+		//console.log(isString('a')); //true
+		//console.log(isString(1)); //false
+
+		function isType(type){
+			return function(obj){
+				console.log(type);
+				return Object.prototype.toString.call(obj) === '[object '+type+']';
+			}
+		}
+		//console.log(isType('String')('a'));
+		var Type = {};
+		var typeArr = ['String', 'Array', 'Number', 'Object'];
+		for (var i = typeArr.length - 1; i >= 0; i--) {
+			var type = typeArr[i];
+			(function(type){
+				Type['is'+type] = function(obj){
+					return Object.prototype.toString.call(obj) === '[object '+type+']';
+				}
+			})(type);
+		}
+		for (var i = 0,type; type=['String', 'Array', 'Number', 'Object'][i++];) {
+			(function(type){
+				console.log(type);
+				Type['is'+type] = function(obj) {
+					return Object.prototype.toString.call(obj) === '[object '+type+']';
+				}
+			})(type);
+		}
+		console.log(Type.isArray);
+		console.log(Type.isArray([]));//true*/
+		/**Array.prototype.sort函数**/
+		/*var arr = [2,4,3,1];
+		arr.sort(function(a,b){
+			console.log(a,b);
+			return b-a;
+		});
+		console.log(arr);*/
+		/**回调函数**/
+		/*function appendDiv(len,callback){
+			for (var i = len-1; i >= 0; i--) {
+				var div = document.createElement('div');
+				div.innerHTML = i;
+				document.body.appendChild(div);
+				if( typeof callback === 'function'){
+					callback(div);
+				}
+				
+			}
+		}
+		appendDiv(10,function(node){
+			node.style.display = 'none';
+		});
+		function getUserInfo(callback){
+			$.get('http://cmt.cnitcloud.com/cloudPublish/user/userController/getUserInfo?returnField=username',function(data){
+				if(typeof callback === 'function'){
+					callback(data);
+				}
+			});
+		}
+		getUserInfo(function(data){
+			console.log(data);//{"result":0,"data":{"username":"18022302572","userAgreementStatus":1}}
+		});*/
+	</script>
+</body>
+</html>
